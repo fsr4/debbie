@@ -1,3 +1,5 @@
+import os
+
 from discord import Client
 from discord.utils import get
 
@@ -8,26 +10,22 @@ class Bot(Client):
     roles = []
     log = None
 
-    def __init__(self, **options):
+    def __init__(self, working_dir, **options):
         super().__init__(**options)
-        role_file = open("roles.txt")
-        self.role_names = role_file.read().splitlines()
-        role_file.close()
+        with open(f"{working_dir}/config/roles.txt") as role_file:
+            self.role_names = role_file.read().splitlines()
         print(self.role_names)
-        topic_file = open("topics.txt")
-        self.topic_names = topic_file.read().splitlines()
-        topic_file.close()
+        with open(f"{working_dir}/config/topics.txt") as topic_file:
+            self.topic_names = topic_file.read().splitlines()
         print(self.topic_names)
-        self.log = open("log.txt", "a")
+        self.log = open(f"{working_dir}/log.txt", "a")
 
     async def on_ready(self):
         print(f"Logged in as user {self.user}")
+        self.setup(self.guilds[0])
 
     async def on_message(self, message):
-        if message.author == self.user or (message.channel.name != "rollen" and message.channel.name != "befehle"):
-            return
-        if len(self.roles) == 0 and message.content == "!initbot":
-            self.setup(message.guild)
+        if message.author == self.user or (message.channel.name != "rollen" and message.channel.name != "commands"):
             return
         if len(self.roles) == 0:
             return
@@ -67,7 +65,8 @@ class Bot(Client):
         self.log.flush()
 
     def get_role_by_name(self, role_name):
-        role = next((r for r in self.roles if r.name.lower() == role_name.lower()), None)
+        role_name = role_name.lower().replace(" ", "")
+        role = next((r for r in self.roles if r.name.lower().replace(" ", "") == role_name), None)
         return role
 
     async def remove_existing_roles(self, user):
@@ -83,7 +82,9 @@ class Bot(Client):
         self.log.flush()
 
 
-with open('key.txt', 'r') as file:
-    key = file.read().replace('\n', '')
+project_dir = os.path.dirname(__file__)
 
-Bot().run(key)
+with open(f"{project_dir}/config/key.txt", "r") as file:
+    key = file.read().replace("\n", "")
+
+Bot(project_dir).run(key)
