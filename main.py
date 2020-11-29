@@ -12,13 +12,13 @@ class Bot(Client):
 
     def __init__(self, working_dir, **options):
         super().__init__(**options)
-        with open(f"{working_dir}/config/roles.txt") as role_file:
+        with open(f"{working_dir}config/roles.txt") as role_file:
             self.role_names = role_file.read().splitlines()
         print(self.role_names)
-        with open(f"{working_dir}/config/topics.txt") as topic_file:
+        with open(f"{working_dir}config/topics.txt") as topic_file:
             self.topic_names = topic_file.read().splitlines()
         print(self.topic_names)
-        self.log = open(f"{working_dir}/log.txt", "a")
+        self.log = open(f"{working_dir}log.txt", "a")
 
     async def on_ready(self):
         print(f"Logged in as user {self.user}")
@@ -44,14 +44,14 @@ class Bot(Client):
 
     async def handle_role_joining(self, user, role_name, channel):
         role = self.get_role_by_name(role_name)
+        join_type = "Thema"
         if role is None:
             return
-        if role_name in self.topic_names:
-            await self.handle_topic_joining(user, role, channel)
-            return
-        await self.remove_existing_roles(user)
+        if role_name.lower().replace(" ", "") in [r.lower().replace(" ", "") for r in self.role_names]:
+            await self.remove_existing_roles(user)
+            join_type = "Studiengang"
         await user.add_roles(role)
-        await channel.send(f"{user.mention} wurde zum Studiengang {role_name.upper()} hinzugefügt!\n")
+        await channel.send(f"{user.mention} wurde zum {join_type} {role_name.upper()} hinzugefügt!\n")
         self.log.write(f"Added {user.name} to role {role.name}\n")
         self.log.flush()
 
@@ -75,16 +75,12 @@ class Bot(Client):
                 await user.remove_roles(role)
                 return
 
-    async def handle_topic_joining(self, user, role, channel):
-        await user.add_roles(role)
-        await channel.send(f"{user.mention} wurde zu {role.name} hinzugefügt!\n")
-        self.log.write(f"Added {user.name} to role {role.name}\n")
-        self.log.flush()
-
 
 project_dir = os.path.dirname(__file__)
+if len(project_dir) != 0:
+    project_dir += "/"
 
-with open(f"{project_dir}/config/key.txt", "r") as file:
+with open(f"{project_dir}config/key.txt", "r") as file:
     key = file.read().replace("\n", "")
 
 Bot(project_dir).run(key)
