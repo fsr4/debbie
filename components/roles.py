@@ -2,6 +2,9 @@
 Rolesystem
 ~~~~~~~~~~
 """
+from discord import HTTPException
+
+
 class Roles:
     # role_names = []
     # topic_names = []
@@ -10,7 +13,7 @@ class Roles:
     parent = None
     role_message_id = None
     emoji_to_role = None
-    
+
     # https://discordpy.readthedocs.io/en/latest/api.html#role
     # https://discordpy.readthedocs.io/en/latest/api.html#reaction
 
@@ -18,7 +21,8 @@ class Roles:
         self.logger = parent.logger
         self.parent = parent
 
-        self.role_message_id = 820311782714769418 #820306041304514570 # ID of message that can be reacted to to add role
+        # 820306041304514570 # ID of message that can be reacted to to add role
+        self.role_message_id = 820311782714769418
         self.emoji_to_role = {
             # "ai": 701076932128931891,  # ID of role associated with partial emoji object 'partial_emoji_1'
             # "fiw": 701079605389426698,
@@ -51,7 +55,7 @@ class Roles:
     async def on_raw_reaction_add(self, payload):
         self.logger.info(f"Neue reaction {payload.emoji.name}")
         """Gives a role based on a reaction emoji."""
-        
+
         # Make sure that the message the user is reacting to is the one we care about
         if payload.message_id != self.role_message_id:
             return
@@ -78,12 +82,12 @@ class Roles:
         try:
             # Finally add the role
             await payload.member.add_roles(role)
-        except discord.HTTPException:
+        except HTTPException:
             # If we want to do something in case of errors we'd do it here.
             pass
 
     async def on_raw_reaction_remove(self, payload):
-        #member = payload.member
+        # member = payload.member
         print(f"reaction entfernt {payload.emoji.name}")
         """Removes a role based on a reaction emoji."""
         # Make sure that the message the user is reacting to is the one we care about
@@ -120,7 +124,7 @@ class Roles:
         try:
             # Finally, remove the role
             await member.remove_roles(role)
-        except discord.HTTPException:
+        except HTTPException:
             # If we want to do something in case of errors we'd do it here.
             self.logger.error("HTTPException")
             pass
