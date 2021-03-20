@@ -18,6 +18,7 @@ class Roles:
     # https://discordpy.readthedocs.io/en/latest/api.html#reaction
 
     def __init__(self, parent):
+        print("[Roles] Starting component")
         self.logger = parent.logger
         self.parent = parent
 
@@ -36,38 +37,40 @@ class Roles:
         }
 
         parent.register(self)
+        
+        print("[Roles] Component started")
 
     # Handle Discord events
-    async def on_event(self, event, a, b, c):
+    async def on_event(self, event, args):
         # if event == "ready":
         #     self.on_ready()
         # elif event == "message":
         #     self.on_message(a)
         if event == "raw_reaction_add":
-            await self.on_raw_reaction_add(a)
+            await self.on_raw_reaction_add(args[0])
         elif event == "raw_reaction_remove":
-            await self.on_raw_reaction_remove(a)
+            await self.on_raw_reaction_remove(args[0])
 
     # https://discordpy.readthedocs.io/en/latest/api.html#discord.on_reaction_add
     # https://github.com/Rapptz/discord.py/blob/master/examples/reaction_roles.py
 
     # add role on a specific user reaction
     async def on_raw_reaction_add(self, payload):
-        self.logger.info(f"Neue reaction {payload.emoji.name}")
-        """Gives a role based on a reaction emoji."""
-
         # Make sure that the message the user is reacting to is the one we care about
         if payload.message_id != self.role_message_id:
             return
+
+        self.logger.info(f"[Roles] New reaction {payload.emoji.name}")
+        """Gives a role based on a reaction emoji."""
 
         try:
             role_id = self.emoji_to_role[payload.emoji.name]
         except KeyError:
             # If the emoji isn't the one we care about then exit as well.
-            self.logger.error(f"Invalid role emoji")
+            self.logger.error(f"[Roles] Invalid role emoji")
             return
 
-        self.logger.info(f"Found role id: {role_id}")
+        self.logger.info(f"[Roles] Found role id: {role_id}")
 
         guild = self.parent.get_guild(payload.guild_id)
         if guild is None:
@@ -87,38 +90,39 @@ class Roles:
             pass
 
     async def on_raw_reaction_remove(self, payload):
-        # member = payload.member
-        print(f"reaction entfernt {payload.emoji.name}")
-        """Removes a role based on a reaction emoji."""
+        # Removes a role based on a reaction emoji.
         # Make sure that the message the user is reacting to is the one we care about
         if payload.message_id != self.role_message_id:
             return
+            
+        # member = payload.member
+        print(f"[Roles] reaction entfernt {payload.emoji.name}")
 
         try:
             role_id = self.emoji_to_role[payload.emoji.name]
         except KeyError:
             # If the emoji isn't the one we care about then exit as well.
-            self.logger.error(f"Konnte keine passende Rolle finden")
+            self.logger.error(f"[Roles] Could not find matching role!")
             return
 
-        print(f"Neue Rolle gefunden: {role_id}")
+        print(f"[Roles] Role found: {role_id}")
 
         guild = self.parent.get_guild(payload.guild_id)
         if guild is None:
             # Check if we're still in the guild and it's cached.
-            self.logger.error(f"Guild is invalid")
+            self.logger.error(f"[Roles] Guild is invalid")
             return
 
         role = guild.get_role(role_id)
         if role is None:
             # Make sure the role still exists and is valid.
-            self.logger.error(f"Role is not valid")
+            self.logger.error(f"[Roles] Role is not valid")
             return
 
         member = guild.get_member(payload.user_id)
         if member is None:
             # Makes sure the member still exists and is valid 147117399391469568
-            self.logger.error(f"Member is not valid, {payload.user_id}")
+            self.logger.error(f"[Roles] Member is not valid, {payload.user_id}")
             return
 
         try:
@@ -126,5 +130,5 @@ class Roles:
             await member.remove_roles(role)
         except HTTPException:
             # If we want to do something in case of errors we'd do it here.
-            self.logger.error("HTTPException")
+            self.logger.error("[Roles] HTTPException")
             pass

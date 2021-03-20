@@ -280,6 +280,9 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,pycharm+all,python
 
+invites/*
+!invites/README.md
 config/key.txt
+config/invites.txt
 log.txt
 .vscode/settings.json

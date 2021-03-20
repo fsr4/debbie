@@ -1,8 +1,10 @@
 class Logger:
     log_file = None
+    parent = None
 
-    def __init__(self, log_path):
+    def __init__(self, log_path, parent):
         self.log_file = open(log_path, "a", encoding="utf-8")
+        self.parent = parent
 
     def log(self, label, message):
         message = f"[{label}] {message}"
