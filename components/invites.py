@@ -107,7 +107,7 @@ class Invites:
                 except KeyError:
                     self.logger.error(f"[Invites] Invalid invite code, using guest")
                     # Use Guest role
-                    role = self.guestRole
+                    role_id = self.guestRole
 
                 self.logger.info(f"[Invites] Found role id: {role_id}")
 
@@ -118,15 +118,15 @@ class Invites:
                     return
 
                 role = guild.get_role(role_id)
+
                 if role is None:
                     # Make sure the role still exists and is valid.
-                    self.logger.info(f"[Invites] Error: No role found, using guest")
-                    # Use Guest role
-                    role = self.guestRole
+                    self.logger.info(f"[Invites] Error: No role found in Discord Server - Abort!")
+                    return
 
                 try:
                     # Finally add the role
-                    await member.add_roles(role)
+                    await member.add_roles(role)   
                 except HTTPException:
                     # If we want to do something in case of errors we'd do it here.
                     pass
