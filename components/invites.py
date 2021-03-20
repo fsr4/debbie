@@ -114,14 +114,14 @@ class Invites:
                 guild = self.parent.get_guild(member.guild.id)
                 if guild is None:
                     # Check if we're still in the guild and it's cached.
-                    self.logger.info(f"[Invites] Error: No guild")
+                    self.logger.error(f"[Invites] Error: No guild - Abort!")
                     return
 
                 role = guild.get_role(role_id)
 
                 if role is None:
                     # Make sure the role still exists and is valid.
-                    self.logger.info(f"[Invites] Error: No role found in Discord Server - Abort!")
+                    self.logger.error(f"[Invites] Error: No role found in guild - Abort!")
                     return
 
                 try:
