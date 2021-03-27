@@ -1,3 +1,6 @@
+from discord import Client
+from discord.utils import get
+
 class Logger:
     log_file = None
     parent = None
@@ -7,10 +10,15 @@ class Logger:
         self.parent = parent
 
     def log(self, label, message):
+        #channel = #support of Fachschaft 4
+        channel = Client.get_channel(self ,825376458276339713)
         message = f"[{label}] {message}"
-        print(message)
+        
+        #send message to channel logfile and console
+        await channel.send(f"{message}\n")
         self.log_file.write(f"{message}\n")
         self.log_file.flush()
+        print(message)
 
     def info(self, message):
         self.log("Info", message)
