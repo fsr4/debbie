@@ -1,0 +1,5 @@
+Studierende
+Lehrende
+Buddy
+Gast
+Alumni
