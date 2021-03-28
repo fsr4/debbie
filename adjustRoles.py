@@ -4,7 +4,7 @@ ACHTUNG: Dieses Skript soll zum Rollensystemwechsel einmalig ausgeführt werden,
 ~~~~~~~~~~
 """
 
-from discord import Client, Intents
+from discord import Client, Intents, Object
 from discord import HTTPException
 import os
 
@@ -33,7 +33,7 @@ class AdjustRoles(Client):
                 if self.oldRoles[roleIdx] in user.roles:
                     # remove old roles to new roles
                     await user.remove_roles(self.oldRoles[roleIdx])
-                    await user.add_role(self.newRoles[roleIdx])
+                    await user.add_roles(self.newRoles[roleIdx], Object(820346720793395201))
                     return
 
 project_dir = os.path.dirname(__file__)
