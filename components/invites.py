@@ -15,6 +15,7 @@ class Invites:
     lecturerRole = 822851116266029057
     buddyRole = 822851121319378966
     guestRole = 822851122590253086
+    alumniRole = 825456973406666752
 
     # https://discordpy.readthedocs.io/en/latest/api.html#role
     # https://discordpy.readthedocs.io/en/latest/api.html#reaction
@@ -29,6 +30,8 @@ class Invites:
           studentKey = file.read().replace("\n", "")
         with open(f"{project_dir}invites/lecturer.txt", "r") as file:
           lecturerKey = file.read().replace("\n", "")
+        with open(f"{project_dir}invites/alumni.txt", "r") as file:
+          alumniKey = file.read().replace("\n", "")
         with open(f"{project_dir}invites/buddy.txt", "r") as file:
           buddyKey = file.read().replace("\n", "")
         with open(f"{project_dir}invites/guest.txt", "r") as file:
@@ -39,6 +42,7 @@ class Invites:
         self.invites_to_roles = {}
         self.invites_to_roles[studentKey] = self.studentRole
         self.invites_to_roles[lecturerKey] = self.lecturerRole
+        self.invites_to_roles[alumniKey] = self.alumniRole
         self.invites_to_roles[buddyKey] = self.buddyRole
         self.invites_to_roles[guestKey] = self.guestRole
 

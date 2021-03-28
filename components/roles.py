@@ -2,7 +2,7 @@
 Rolesystem
 ~~~~~~~~~~
 """
-from discord import HTTPException
+from discord import HTTPException, NotFound, Object
 import os
 
 
@@ -14,6 +14,13 @@ class Roles:
     parent = None
     role_message_id = None
     emoji_to_role = None
+
+    # IDs of the support and commands Channel
+    supportChannel = 820281018263142412
+    commandsChannel = 701091404213911583
+
+    # The User reactions are locked - currently Ayndread#4242
+    lockedUser =  147117399391469568 
 
     # https://discordpy.readthedocs.io/en/latest/api.html#role
     # https://discordpy.readthedocs.io/en/latest/api.html#reaction
@@ -112,41 +119,35 @@ class Roles:
             return
 
         try: #to add or remove the role
-            for majorRole in self.majors:
-                if role in payload.member.roles:
-                    await self.logger.notify(f"{payload.member.mention} left {role.name}")
-                    await payload.member.remove_roles(role)
-                    # TODO remove all user reactions instead of this single one
-                    return
-                elif self.get_role_by_name(majorRole, guild) != role and self.get_role_by_name(majorRole, guild) in payload.member.roles:
-                    await self.logger.notify(f"{payload.member.mention} you need to leave {majorRole} before joining {role.name}")
-                    # TODO remove all user reactions instead of this single one
-                    return
-                else:
-                    await self.logger.notify(f"{payload.member.mention} joined {role.name}")
-                    await payload.member.add_roles(role)
-                    # TODO remove all user reactions instead of this single one
-                    return
-
-            """
-            for topicRole in self.topics:                
-                if self.get_role_by_name(topicRole, guild) in payload.member.roles:
-                    await self.logger.notify(f"{member.mention} left {role.name}")
-                    await payload.member.remove_roles(role)
-                    # TODO remove all user reactions instead of this single one
-                    return
-                else:
-                    await self.logger.notify(f"{member.mention} joined {role.name}")
-                    await payload.member.add_roles(role)
-                    # TODO remove all user reactions instead of this single one
-                    return
-            """
+            # Remove role if member is part of
+            if role in payload.member.roles:
+                await self.logger.notify(f"{payload.member.mention} left {role.name}", self.supportChannel)
+                await payload.member.remove_roles(role)
+            
+            # Notify user when trying to add multiple roles
+            elif role.name in self.majors and any(self.get_role_by_name(majorRole, guild) in payload.member.roles for majorRole in self.majors):
+                currentRole = next((r for r in payload.member.roles for majorRole in self.majors if r.name.lower().replace(" ", "") == majorRole.lower().replace(" ", "")), None)
+                await self.logger.notify(f"{payload.member.mention} you need to leave {currentRole} before joining {role.name}", self.supportChannel)
+            
+            # Finally add role
+            else: 
+                await self.logger.notify(f"{payload.member.mention} joined {role.name}", self.supportChannel)
+                await payload.member.add_roles(role)
+            
+            # Remove all user reactions except for the locked one
+            reactionMsg = await guild.get_channel(payload.channel_id).fetch_message(payload.message_id)
+            members = list(map(lambda member: Object(member.id), list(filter(lambda member: member.id != self.lockedUser, guild.members))))
+            # https://discordpy.readthedocs.io/en/latest/api.html?highlight=remove%20reaction#discord.Message.remove_reaction
+            [await reactionMsg.remove_reaction(payload.emoji, member) for member in members]
 
         except HTTPException:
             # If we want to do something in case of errors we'd do it here.
             pass
     
-    """        
+    """ 
+
+    # https://discordpy.readthedocs.io/en/latest/api.html?highlight=remove%20reaction#discord.on_raw_reaction_remove
+           
     async def on_raw_reaction_remove(self, payload):
         # Removes a role based on a reaction emoji.
         # Make sure that the message the user is reacting to is the one we care about
