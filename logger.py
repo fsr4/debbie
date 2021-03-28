@@ -24,6 +24,6 @@ class Logger:
     def error(self, message):
         self.log("Error", message)
 
-    async def notify(self, message):
-        channel = self.parent.get_channel(820281018263142412)
+    async def notify(self, message, channel):
+        channel = self.parent.get_channel(channel)
         await channel.send(f"{message}\n")
