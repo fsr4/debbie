@@ -30,9 +30,11 @@ class AdjustRoles(Client):
     async def adjust_existing_roles(self, guild):
         for user in guild.members:
             for roleIdx in range(0, self.oldRoles.count):
-                if self.oldRoles[roleIdx] in user.roles:
-                    # remove old roles to new roles
-                    await user.remove_roles(self.oldRoles[roleIdx])
+
+                
+                if self.oldRoles[roleIdx] in user.roles: # old roles to new roles
+                    # do not remove just delete role manually and everyone loses it
+                    # await user.remove_roles(self.oldRoles[roleIdx]) 
                     await user.add_roles(self.newRoles[roleIdx], Object(820346720793395201))
                     return
 
