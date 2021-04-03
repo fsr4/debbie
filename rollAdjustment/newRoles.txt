@@ -1,5 +1,5 @@
-AI (B)
-IMI (B)
-WI (B)
-WiKo (B)
-WIW (B)
+AI
+IMI
+WI
+WiKo
+WIW
