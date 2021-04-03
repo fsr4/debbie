@@ -32,12 +32,15 @@ class AdjustRoles(Client):
         
 
     async def adjust_existing_roles(self, guild):
+        memberIdx = 0
+        print("\nStarting Role-Change... \n-----------------------")
         for member in guild.members:
-            print(guild.roles)
+            memberIdx += 1
+
+            print(f"{memberIdx}. {member.name}")
             for roleIdx in range(0, len(self.oldRoles)):
                 for role in member.roles:
                     if role.name == self.oldRoles[roleIdx]: 
-                        #print(self.newRoles[roleIdx]) 
                         await member.add_roles(self.get_role_by_name(self.newRoles[roleIdx], guild))
                         await member.add_roles(self.get_role_by_name("Studierende", guild))
 
