@@ -10,12 +10,21 @@ class Invites:
     invites = {}
     invites_to_roles = {}
     
-    # Role IDs from Discord
+    # Role IDs for the DEV-Server
     studentRole = 820346720793395201
     lecturerRole = 822851116266029057
     buddyRole = 822851121319378966
     guestRole = 822851122590253086
     alumniRole = 825456973406666752
+
+    # Role IDs for the FS4-Server
+    """
+    studenRole = 
+    lecturerRole = 
+    buddyRole = 
+    guestRole = 
+    alumniRole = 
+    """
 
     # https://discordpy.readthedocs.io/en/latest/api.html#role
     # https://discordpy.readthedocs.io/en/latest/api.html#reaction
@@ -53,12 +62,6 @@ class Invites:
     async def on_event(self, event, args):
         if event == "ready":
             await self.on_ready()
-        # elif event == "message":
-        #     self.on_message(a)
-        # if event == "raw_reaction_add":
-        #     await self.on_raw_reaction_add(a)
-        # elif event == "raw_reaction_remove":
-        #     await self.on_raw_reaction_remove(a)
         elif event == "member_join":
             await self.on_member_join(args[0])
         elif event == "member_remove":
