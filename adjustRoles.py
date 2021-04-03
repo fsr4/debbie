@@ -4,8 +4,9 @@ ACHTUNG: Dieses Skript soll zum Rollensystemwechsel einmalig ausgeführt werden,
 ~~~~~~~~~~
 """
 
-from discord import Client, Intents, Object
+from discord import Client, Intents, Object, Member, Role
 from discord import HTTPException
+from logger import Logger
 import os
 
 class AdjustRoles(Client):
@@ -25,18 +26,24 @@ class AdjustRoles(Client):
 
     async def on_ready(self):
         print(f"[Main (Bot)] Logged in as user {self.user}")
-        self.adjust_existing_roles(self.guilds[0])
+        print(self.oldRoles)
+        print(self.newRoles)
+        await self.adjust_existing_roles(self.guilds[0])
+        
 
     async def adjust_existing_roles(self, guild):
-        for user in guild.members:
-            for roleIdx in range(0, self.oldRoles.count):
+        for member in guild.members:
+            print(guild.roles)
+            for roleIdx in range(0, len(self.oldRoles)):
+                for role in member.roles:
+                    if role.name == self.oldRoles[roleIdx]: 
+                        #print(self.newRoles[roleIdx]) 
+                        await member.add_roles(self.get_role_by_name(self.newRoles[roleIdx], guild))
 
-                
-                if self.oldRoles[roleIdx] in user.roles: # old roles to new roles
-                    # do not remove just delete role manually and everyone loses it
-                    # await user.remove_roles(self.oldRoles[roleIdx]) 
-                    await user.add_roles(self.newRoles[roleIdx], Object(820346720793395201))
-                    return
+    def get_role_by_name(self, role_name, guild):
+        role_name = role_name.lower().replace(" ", "")
+        role = next((r for r in guild.roles if r.name.lower().replace(" ", "") == role_name), None)
+        return role
 
 project_dir = os.path.dirname(__file__)
 if len(project_dir) != 0:
