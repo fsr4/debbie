@@ -39,6 +39,7 @@ class AdjustRoles(Client):
                     if role.name == self.oldRoles[roleIdx]: 
                         #print(self.newRoles[roleIdx]) 
                         await member.add_roles(self.get_role_by_name(self.newRoles[roleIdx], guild))
+                        await member.add_roles(self.get_role_by_name("Studierende", guild))
 
     def get_role_by_name(self, role_name, guild):
         role_name = role_name.lower().replace(" ", "")
