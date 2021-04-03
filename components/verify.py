@@ -22,7 +22,7 @@ class Verify:
         self.log = open(f"{working_dir}/log.txt", "a")
 
         # ID of message that can be reacted to to add role
-        self.verify_message_id = 825745357589053470
+        self.verify_message_id = 822904669943758918
         
         self.emoji_to_verify = {
             "✅": 825744195896868864

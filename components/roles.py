@@ -43,6 +43,7 @@ class Roles:
 
         # ID of message that can be reacted to to add role
         self.role_message_id = 820311782714769418
+        self.verify_message_id = 822904669943758918
         
         self.emoji_to_role = {
             # IDs of role associated with partial emoji object from FACHSCHAFT4 
@@ -56,7 +57,8 @@ class Roles:
             # "wm": 701078451989381150,
             # "far": 701078591986860063,
             #"🍿": 706937054751096832, 
-            #"🎮": 706936994386804857
+            #"🎮": 706936994386804857,
+            #"✅": 826082569757130802
 
             # IDs of role associated with partial emoji object from DEV-DISCORD
             "ai": 825444462834090004,
@@ -69,24 +71,20 @@ class Roles:
             "wm": 825368307301220372,
             "far": 825456457116942368,
             "🍿": 820325939632275456,
-            "🎮": 820325903313535027
+            "🎮": 820325903313535027,
+            "✅": 825744195896868864 #:white_check_mark:
         }
-
         parent.register(self)
-        
+                
         print("[Roles] Component started")
 
     # Handle Discord events
     async def on_event(self, event, args):
-        # if event == "ready":
-        #     self.on_ready()
-        # elif event == "message":
-        #     self.on_message(a)
         if event == "raw_reaction_add":
             await self.on_raw_reaction_add(args[0])
-        #elif event == "raw_reaction_remove":
-            #await self.on_raw_reaction_remove(args[0])
-
+        if event == "raw_reaction_remove":
+            await self.on_raw_reaction_remove(args[0])
+            
     # https://discordpy.readthedocs.io/en/latest/api.html#discord.on_reaction_add
     # https://github.com/Rapptz/discord.py/blob/master/examples/reaction_roles.py
 
@@ -131,40 +129,37 @@ class Roles:
             
             # Finally add role
             else: 
-                await self.logger.notify(f"{payload.member.mention} joined {role.name}", self.supportChannel)
+                await self.logger.notify(f"{payload.member.mention} is now {role.name}", self.supportChannel)
                 await payload.member.add_roles(role)
             
             # Remove all user reactions except for the locked one
-            reactionMsg = await guild.get_channel(payload.channel_id).fetch_message(payload.message_id)
-            members = list(map(lambda member: Object(member.id), list(filter(lambda member: member.id != self.lockedUser, guild.members))))
-            # https://discordpy.readthedocs.io/en/latest/api.html?highlight=remove%20reaction#discord.Message.remove_reaction
-            [await reactionMsg.remove_reaction(payload.emoji, member) for member in members]
+            if payload.emoji.name != "✅":
+                reactionMsg = await guild.get_channel(payload.channel_id).fetch_message(payload.message_id)
+                members = list(map(lambda member: Object(member.id), list(filter(lambda member: member.id != self.lockedUser, guild.members))))
+                # https://discordpy.readthedocs.io/en/latest/api.html?highlight=remove%20reaction#discord.Message.remove_reaction
+                [await reactionMsg.remove_reaction(payload.emoji, member) for member in members]
 
         except HTTPException:
             # If we want to do something in case of errors we'd do it here.
             pass
-    
-    """ 
 
-    # https://discordpy.readthedocs.io/en/latest/api.html?highlight=remove%20reaction#discord.on_raw_reaction_remove
-           
     async def on_raw_reaction_remove(self, payload):
         # Removes a role based on a reaction emoji.
         # Make sure that the message the user is reacting to is the one we care about
-        if payload.message_id != self.role_message_id:
+        if payload.message_id != self.verify_message_id:
             return
             
         # member = payload.member
-        print(f"[Roles] reaction entfernt {payload.emoji.name}")
+        print(f"[Roles] reaction removed {payload.emoji.name}")
 
         try:
-            role_id = self.emoji_to_role[payload.emoji.name]
+            verify_id = self.emoji_to_role[payload.emoji.name]
         except KeyError:
             # If the emoji isn't the one we care about then exit as well.
             self.logger.error(f"[Roles] Could not find matching role!")
             return
 
-        print(f"[Roles] Role found: {role_id}")
+        print(f"[Roles] Role found: {verify_id}")
 
         guild = self.parent.get_guild(payload.guild_id)
         if guild is None:
@@ -172,8 +167,8 @@ class Roles:
             self.logger.error(f"[Roles] Guild is invalid")
             return
 
-        role = guild.get_role(role_id)
-        if role is None:
+        verify_role = guild.get_role(verify_id)
+        if verify_role is None:
             # Make sure the role still exists and is valid.
             self.logger.error(f"[Roles] Role is not valid")
             return
@@ -184,15 +179,19 @@ class Roles:
             self.logger.error(f"[Roles] Member is not valid, {payload.user_id}")
             return
 
-        try:
-            # Finally, remove the role
-            self.logger.notify("{user.mention} left {role.name}")
-            await member.remove_roles(role)
+        try: # to remove the role
+            # Remove role if member is part of
+            if verify_role in member.roles:
+                await self.logger.notify(f"{member.mention} revokes its consent.", self.supportChannel)
+                await member.remove_roles(verify_role)
+            
+            # Finally add role
+            else: 
+                await self.logger.error(f"{member.mention} already revoked its consent.")
+            
         except HTTPException:
             # If we want to do something in case of errors we'd do it here.
-            self.logger.error("[Roles] HTTPException")
             pass
-    """
 
     def get_role_by_name(self, role_name, guild):
         role_name = role_name.lower().replace(" ", "")
@@ -203,7 +202,3 @@ class Roles:
     project_dir = os.path.dirname(__file__)
     if len(project_dir) != 0:
         project_dir += "/"
-
-    #await channel.send(f"{user.mention} wurde aus {role.name} entfernt!\n")
-    #self.log.write(f"Removed {user.name} from role {role.name}\n")
-    #self.log.flush()

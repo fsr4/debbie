@@ -11,7 +11,7 @@ from discord import Client, Intents
 
 from components.roles import Roles
 from components.invites import Invites
-from components.verify import Verify
+#from components.verify import Verify
 from logger import Logger
 
 
@@ -34,7 +34,7 @@ class Bot(Client):
         print("[Main (Bot)] Setting up components")
         Roles(self)
         Invites(self, working_dir)
-        Verify(self)
+        #Verify(self)
         print("[Main (Bot)] All components set up")
 
     # Publisher-Subscriber logic
