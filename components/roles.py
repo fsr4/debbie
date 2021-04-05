@@ -13,7 +13,8 @@ class Roles:
     logger = None
     parent = None
     role_message_id = None
-    emoji_to_role = None
+    student_reaction_to_role = None
+    teacher_reaction_to_role = None
 
     # IDs of the support and commands Channel
     #supportChannel = 828645631609536552 #DEV-DISCORD
@@ -45,7 +46,7 @@ class Roles:
         #self.role_message_id = [820311782714769418, 827890777102483457, 828654368508608602] #DEV-DISCORD
         self.role_message_id = [826088920193433632, 826087669377138739, 826088012668207115, 826089748061487154, 826090668799033424] #FB4-DISCORD
 
-        self.emoji_to_role = {
+        self.student_reaction_to_role = {
             #FB4-DISCORD
             "ai": 701076932128931891,  
             "fiw": 701079605389426698,
@@ -74,6 +75,20 @@ class Roles:
             #"🎲": 706936994386804857,
             #"🎮": 820325903313535027
         }
+
+        self.teacher_reaction_to_role = {
+            #FB4-DISCORD
+            "ai": 1,  
+            "fiw": 2,
+            "ikg": 3,
+            "imi": 4,
+            "wi": 5,
+            "wiko": 6,
+            "wiw": 7,
+            "wm": 8,
+            "far": 9
+        }
+
         parent.register(self)
                 
         print("[Roles] Component started")
@@ -98,7 +113,7 @@ class Roles:
         """Gives a role based on a reaction emoji."""
 
         try:
-            role_id = self.emoji_to_role[payload.emoji.name]
+            role_id = self.student_reaction_to_role[payload.emoji.name]
         except KeyError:
             # If the emoji isn't the one we care about then exit as well.
             self.logger.error(f"[Roles] Invalid role emoji")
