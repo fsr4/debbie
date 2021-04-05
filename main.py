@@ -11,7 +11,7 @@ from discord import Client, Intents
 
 from components.roles import Roles
 from components.invites import Invites
-#from components.verify import Verify
+from components.verify import Verify
 from logger import Logger
 
 
@@ -34,7 +34,7 @@ class Bot(Client):
         print("[Main (Bot)] Setting up components")
         Roles(self)
         Invites(self, working_dir)
-        #Verify(self)
+        Verify(self)
         print("[Main (Bot)] All components set up")
 
     # Publisher-Subscriber logic
@@ -53,10 +53,6 @@ class Bot(Client):
     # Publish discord events to the publisher-subscriber-structure
     async def on_ready(self):
         await self.emit("ready")
-    # async def on_message(self, message):
-    #     await self.emit("message", message)
-    # async def on_reaction_add(self, reaction, user):
-    #     await self.emit("reaction_add", reaction, user)
     async def on_raw_reaction_add(self, payload):
         await self.emit("raw_reaction_add", payload)
     async def on_raw_reaction_remove(self, payload):

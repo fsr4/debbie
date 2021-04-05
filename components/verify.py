@@ -22,10 +22,13 @@ class Verify:
         self.log = open(f"{working_dir}/log.txt", "a")
 
         # ID of message that can be reacted to to add role
-        self.verify_message_id = 822904669943758918
-        
+        self.verify_message_id = 825745357589053470 #DEV-DISCORD
+        # self.verify_message_id = 825376458276339713 #FB4-DISCORD
+
         self.emoji_to_verify = {
-            "✅": 825744195896868864
+            "✅": 825744195896868864 #DEV-DISCORD
+            
+            #"✅": 826082569757130802 #FB4-DISCORD
         }
 
         parent.register(self)
@@ -74,13 +77,13 @@ class Verify:
 
         try: # to add or remove the verified role
             if verify_role in payload.member.roles:
-                await self.logger.error(f"{payload.member.mention} already accepted the rules.")
-            
+                self.logger.error(f"{payload.member.mention} already accepted the rules.")
+
             # Finally add role
             else: 
                 await self.logger.notify(f"{payload.member.mention} accepts the rules.", self.supportChannel)
                 await payload.member.add_roles(verify_role)
-            
+
         except HTTPException:
             # If we want to do something in case of errors we'd do it here.
             pass
@@ -93,7 +96,7 @@ class Verify:
         # Make sure that the message the user is reacting to is the one we care about
         if payload.message_id != self.verify_message_id:
             return
-            
+
         # member = payload.member
         print(f"[Roles] reaction removed {payload.emoji.name}")
 
@@ -129,11 +132,11 @@ class Verify:
             if verify_role in member.roles:
                 await self.logger.notify(f"{member.mention} revokes its consent.", self.supportChannel)
                 await member.remove_roles(verify_role)
-            
+
             # Finally add role
             else: 
-                await self.logger.error(f"{member.mention} already revoked its consent.")
-            
+                self.logger.error(f"{member.mention} already revoked its consent.")
+
         except HTTPException:
             # If we want to do something in case of errors we'd do it here.
             pass

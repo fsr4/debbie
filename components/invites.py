@@ -10,20 +10,20 @@ class Invites:
     invites = {}
     invites_to_roles = {}
     
-    # Role IDs for the DEV-Server
+
+    #DEV-DISCORD Roles
     studentRole = 820346720793395201
     lecturerRole = 822851116266029057
     buddyRole = 822851121319378966
     guestRole = 822851122590253086
     alumniRole = 825456973406666752
-
-    # Role IDs for the FS4-Server
     """
-    studenRole = 
-    lecturerRole = 
-    buddyRole = 
-    guestRole = 
-    alumniRole = 
+    #FS4-DISCORD Roles
+    studenRole = 820346720793395201
+    lecturerRole = 822851116266029057
+    buddyRole = 822851121319378966
+    guestRole = 822851122590253086
+    alumniRole = 825456973406666752
     """
 
     # https://discordpy.readthedocs.io/en/latest/api.html#role
@@ -45,8 +45,6 @@ class Invites:
           buddyKey = file.read().replace("\n", "")
         with open(f"{project_dir}invites/guest.txt", "r") as file:
           guestKey = file.read().replace("\n", "")
-
-        print(studentKey)
         
         self.invites_to_roles = {}
         self.invites_to_roles[studentKey] = self.studentRole
