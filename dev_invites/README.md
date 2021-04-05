@@ -1,0 +1,1 @@
+These are the invite codes used for the DEV-Server

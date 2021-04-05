@@ -8,7 +8,8 @@ import os
 
 class Verify:
     # IDs of the support and commands Channel
-    supportChannel = 820281018263142412
+    # supportChannel = 820281018263142412 #DEV-SERVER
+    supportChannel = 825376458276339713 #FB4-SERVER
 
     # https://discordpy.readthedocs.io/en/latest/api.html#role
     # https://discordpy.readthedocs.io/en/latest/api.html#reaction
@@ -22,13 +23,12 @@ class Verify:
         self.log = open(f"{working_dir}/log.txt", "a")
 
         # ID of message that can be reacted to to add role
-        self.verify_message_id = 825745357589053470 #DEV-DISCORD
-        # self.verify_message_id = 825376458276339713 #FB4-DISCORD
+        #self.verify_message_id = 825745357589053470 #DEV-DISCORD
+        self.verify_message_id = 828666765151698946 #FB4-DISCORD
 
         self.emoji_to_verify = {
-            "✅": 825744195896868864 #DEV-DISCORD
-            
-            #"✅": 826082569757130802 #FB4-DISCORD
+            #"✅": 825744195896868864 #DEV-DISCORD
+            "✅": 826082569757130802 #FB4-DISCORD
         }
 
         parent.register(self)

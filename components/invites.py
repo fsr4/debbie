@@ -10,7 +10,7 @@ class Invites:
     invites = {}
     invites_to_roles = {}
     
-
+    """
     #DEV-DISCORD Roles
     studentRole = 820346720793395201
     lecturerRole = 822851116266029057
@@ -19,12 +19,11 @@ class Invites:
     alumniRole = 825456973406666752
     """
     #FS4-DISCORD Roles
-    studenRole = 820346720793395201
-    lecturerRole = 822851116266029057
-    buddyRole = 822851121319378966
-    guestRole = 822851122590253086
-    alumniRole = 825456973406666752
-    """
+    studentRole = 820065852069904415
+    lecturerRole = 820607041906147350
+    buddyRole = 701098327101669426
+    guestRole = 820607512960434187
+    alumniRole = 702513675562647672
 
     # https://discordpy.readthedocs.io/en/latest/api.html#role
     # https://discordpy.readthedocs.io/en/latest/api.html#reaction

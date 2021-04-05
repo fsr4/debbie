@@ -16,11 +16,11 @@ class Roles:
     emoji_to_role = None
 
     # IDs of the support and commands Channel
-    supportChannel = 828645631609536552 #DEV-DISCORD
-    #supportChannel = 825376458276339713 #FB4-DISCORD 
+    #supportChannel = 828645631609536552 #DEV-DISCORD
+    supportChannel = 825376458276339713 #FB4-DISCORD 
 
-    # The User reactions are locked - currently Ayndread#4242
-    lockedUser =  147117399391469568 
+    #lockedUser = 147117399391469568 # Ayendreas#4242 
+    lockedUser = 701083769913737368 # FSR4#2520
 
     # https://discordpy.readthedocs.io/en/latest/api.html#role
     # https://discordpy.readthedocs.io/en/latest/api.html#reaction
@@ -42,35 +42,37 @@ class Roles:
         self.log = open(f"{working_dir}/log.txt", "a")
 
         # ID of message that can be reacted to to add role
-        self.role_message_id = [820311782714769418, 827890777102483457, 828654368508608602] #DEV-DISCORD
-        #self.role_message_id = [825411896676450371, 826061339105034320, 826060157049896961, 825412786477727785, 822844083629326336] #FB4-DISCORD
+        #self.role_message_id = [820311782714769418, 827890777102483457, 828654368508608602] #DEV-DISCORD
+        self.role_message_id = [826088920193433632, 826087669377138739, 826088012668207115, 826089748061487154, 826090668799033424] #FB4-DISCORD
 
         self.emoji_to_role = {
             #FB4-DISCORD
-            #"ai": 701076932128931891,  
-            #"fiw": 701079605389426698,
-            #"ikg": 825381218942058547,
-            #"imi": 701080074429923368,
-            #"wi": 701078301200089170,
-            #"wiko": 701079069340729345,
-            #"wiw": 701078822878969969,
-            #"wm": 701078451989381150,
-            #"far": 701078591986860063,
-            #"🍿": 706937054751096832, 
-            #"🎮": 706936994386804857,
+            "ai": 701076932128931891,  
+            "fiw": 701079605389426698,
+            "ikg": 826132422734512128,
+            "imi": 701080074429923368,
+            "wi": 701078301200089170,
+            "wiko": 701079069340729345,
+            "wiw": 701078822878969969,
+            "wm": 701078451989381150,
+            "far": 701078591986860063,
+            "🍿": 706937054751096832,
+            "🎲": 706936994386804857,
+            "🎮": 781596247580606464
 
             #DEV-DISCORD 
-            "ai": 825444462834090004,
-            "fiw": 825455839325192212,
-            "ikg": 825456114350948402,
-            "imi": 822895053009715202,
-            "wi": 825456172487278653,
-            "wiko": 825456214572925009,
-            "wiw": 825456242205917184,
-            "wm": 825368307301220372,
-            "far": 825456457116942368,
-            "🍿": 820325939632275456,
-            "🎮": 820325903313535027,
+            #"ai": 825444462834090004,
+            #"fiw": 825455839325192212,
+            #"ikg": 825456114350948402,
+            #"imi": 822895053009715202,
+            #"wi": 825456172487278653,
+            #"wiko": 825456214572925009,
+            #"wiw": 825456242205917184,
+            #"wm": 825368307301220372,
+            #"far": 825456457116942368,
+            #"🍿": 820325939632275456,
+            #"🎲": 706936994386804857,
+            #"🎮": 820325903313535027
         }
         parent.register(self)
                 
@@ -131,7 +133,6 @@ class Roles:
                 await payload.member.add_roles(role)
             
             # Remove all user reactions except for the locked one
-            # if payload.emoji.name != "✅":
             reactionMsg = await guild.get_channel(payload.channel_id).fetch_message(payload.message_id)
             members = list(map(lambda member: Object(member.id), list(filter(lambda member: member.id != self.lockedUser, guild.members))))
             # https://discordpy.readthedocs.io/en/latest/api.html?highlight=remove%20reaction#discord.Message.remove_reaction
