@@ -9,5 +9,8 @@ This API key needs to be stored in a file called `key.txt`, which has to be in t
 To install the required dependencies for this project (i.e. the Python Discord API), 
 run `pip install -r requirements.txt` before starting the bot for the first time.
 
+python -m pip install -r requirements.txt
+
 ## Run the bot
 To run the bot, you simply need to execute `python main.py` from the command line.
+    

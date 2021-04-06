@@ -1,79 +1,66 @@
+"""
+HTW FSR4 Discord Bot
+~~~~~~~~~~~~~~~~~~~
+
+:copyright: (c) 2021-present FSR4
+:license: MIT, see LICENSE for more details.
+"""
 import os
 
-from discord import Client
-from discord.utils import get
+from discord import Client, Intents
+
+from components.roles import Roles
+from components.invites import Invites
+from components.verify import Verify
+from logger import Logger
 
 
+# Main instance of the Bots
+# This class handles setting up all the components of the bot and notifies the components
+# about events using a publisher-subscriber-structure
 class Bot(Client):
-    role_names = []
-    topic_names = []
-    roles = []
-    log = None
+    logger = None
+    subscribers = set()
 
     def __init__(self, working_dir, **options):
         super().__init__(**options)
-        with open(f"{working_dir}config/roles.txt") as role_file:
-            self.role_names = role_file.read().splitlines()
-        print(self.role_names)
-        with open(f"{working_dir}config/topics.txt") as topic_file:
-            self.topic_names = topic_file.read().splitlines()
-        print(self.topic_names)
-        self.log = open(f"{working_dir}log.txt", "a")
+        print("[Main (Bot)] Starting")
+        self.logger = Logger(f"{working_dir}log.txt", self)
+        self.setup_components(working_dir)
+        print("[Main (Bot)] Started successfully")
 
+    # Setup subcomponents
+    def setup_components(self, working_dir):
+        print("[Main (Bot)] Setting up components")
+        Roles(self)
+        Invites(self, working_dir)
+        Verify(self)
+        print("[Main (Bot)] All components set up")
+
+    # Publisher-Subscriber logic
+    def register(self, who):
+        print("[Main (Bot)] New component added ad subscriber")
+        self.subscribers.add(who)
+
+    def unregister(self, who):
+        self.subscribers.discard(who)
+
+    async def emit(self, message, *args):
+        print("[Main (Bot)] Emmiting new event", message, "to all subscribers")
+        for subscriber in self.subscribers:
+            await subscriber.on_event(message, args)
+
+    # Publish discord events to the publisher-subscriber-structure
     async def on_ready(self):
-        print(f"Logged in as user {self.user}")
-        self.setup(self.guilds[0])
-
-    async def on_message(self, message):
-        if message.author == self.user or (message.channel.name != "rollen" and message.channel.name != "commands"):
-            return
-        if len(self.roles) == 0:
-            return
-        if message.content.lower().startswith("!join "):
-            await self.handle_role_joining(message.author, message.content[6:], message.channel)
-            return
-        if message.content.lower().startswith("!leave "):
-            await self.handle_role_leaving(message.author, message.content[7:], message.channel)
-
-    def setup(self, guild):
-        for role in self.role_names:
-            self.roles.append(get(guild.roles, name=role))
-        for topic in self.topic_names:
-            self.roles.append(get(guild.roles, name=topic))
-        print(list(map(lambda r: r.name, self.roles)))
-
-    async def handle_role_joining(self, user, role_name, channel):
-        role = self.get_role_by_name(role_name)
-        join_type = "Thema"
-        if role is None:
-            return
-        if role_name.lower().replace(" ", "") in [r.lower().replace(" ", "") for r in self.role_names]:
-            await self.remove_existing_roles(user)
-            join_type = "Studiengang"
-        await user.add_roles(role)
-        await channel.send(f"{user.mention} wurde zum {join_type} {role_name.upper()} hinzugefügt!\n")
-        self.log.write(f"Added {user.name} to role {role.name}\n")
-        self.log.flush()
-
-    async def handle_role_leaving(self, user, role_name, channel):
-        role = self.get_role_by_name(role_name)
-        if role is None:
-            return
-        await user.remove_roles(role)
-        await channel.send(f"{user.mention} wurde aus {role.name} entfernt!\n")
-        self.log.write(f"Removed {user.name} from role {role.name}\n")
-        self.log.flush()
-
-    def get_role_by_name(self, role_name):
-        role_name = role_name.lower().replace(" ", "")
-        role = next((r for r in self.roles if r.name.lower().replace(" ", "") == role_name), None)
-        return role
-
-    async def remove_existing_roles(self, user):
-        for role in self.roles:
-            if role in user.roles:
-                await user.remove_roles(role)
-                return
+        await self.emit("ready")
+    async def on_raw_reaction_add(self, payload):
+        await self.emit("raw_reaction_add", payload)
+    async def on_raw_reaction_remove(self, payload):
+        await self.emit("raw_reaction_remove", payload)
+    async def on_member_join(self, member):
+        await self.emit("member_join", member)
+    async def on_member_remove(self, member):
+        await self.emit("member_remove", member)
 
 
 project_dir = os.path.dirname(__file__)
@@ -83,4 +70,7 @@ if len(project_dir) != 0:
 with open(f"{project_dir}config/key.txt", "r") as file:
     key = file.read().replace("\n", "")
 
-Bot(project_dir).run(key)
+# Bot, du darfst das!
+intents = Intents.default()
+intents.members = True
+Bot(project_dir, intents=intents).run(key)
