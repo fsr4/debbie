@@ -1,10 +1,10 @@
-FROM python:3.8-alpine
+FROM python:3.8-slim-buster
 
 WORKDIR /app
 
 # Install the required dependencies
 COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Copy all files into the workdir
 COPY . .
