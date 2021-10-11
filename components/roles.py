@@ -75,18 +75,18 @@ class Roles:
             #"🎲": 706936994386804857,
             #"🎮": 820325903313535027
         }
-
+    # Wenn bei willkommen-lehrende das jeweilige Piktogramm ausgewaehlt wird, wird diese Person dann der Lehrendenrolle hinzugefuegt
         self.teacher_reaction_to_role = {
             #FB4-DISCORD
-            "ai": 1,  
-            "fiw": 2,
-            "ikg": 3,
-            "imi": 4,
-            "wi": 5,
-            "wiko": 6,
-            "wiw": 7,
-            "wm": 8,
-            "far": 9
+            "ai": 828707725331660911,
+            "fiw": 848617013085864006,
+            "ikg": 848616821883928608,
+            "imi": 848617152210403348,
+            "wi": 848617289154691083,
+            "wiko": 848617422961377320,
+            "wiw": 848617846154330142,
+            "wm": 848617650598314054,
+            "far": 848617935081963580
         }
 
         parent.register(self)
